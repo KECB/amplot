@@ -1,8 +1,13 @@
-from distutils.core import setup
+try:
+    from setuptools import setup
+except ImportError:
+    from distutils.core import setup
+
+version = '0.2'
 setup(
     name='amplot',
     packages=['amplot'],
-    version='0.1',
+    version=version,
     description='A map plot based on Amap(高德地图).',
     author='Yang Bai',
     author_email='by66666@gmail.com',

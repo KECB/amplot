@@ -149,3 +149,5 @@ Temporary Items
 .apdisk
 
 .pypirc
+key
+*.html
