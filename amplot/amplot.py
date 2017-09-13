@@ -28,6 +28,7 @@ class AMapPlotter(object):
         self.grids = None
         self.paths = []
         self.shapes = []
+        self.circles = []
         self.points = []
         self.heatmap_points = []
         self.radpoints = []
@@ -73,8 +74,7 @@ class AMapPlotter(object):
         kwargs.setdefault('face_color', "#000000")
         kwargs.setdefault("color", color)
         settings = self._process_kwargs(kwargs)
-        path = self.get_cycle(lat, lng, radius)
-        self.shapes.append((path, settings))
+        self.circles.append(((lat, lng, radius), settings))
 
     def get_cycle(self, lat, lng, rad):
         # unit of radius: meter
@@ -165,6 +165,7 @@ class AMapPlotter(object):
             self.write_map(f)
             self.write_paths(f)
             self.write_shapes(f)
+            self.write_circles(f)
             f.write('</script>\n')
 
             f.write('</body>\n')
@@ -250,6 +251,10 @@ class AMapPlotter(object):
         for shape, settings in self.shapes:
             self.write_polygon(f, shape, settings)
 
+    def write_circles(self, f):
+        for circle, settings in self.circles:
+            self.write_circle(f, circle, settings)
+
     def write_polyline(self, f, path, settings):
         stroke_color = settings.get('color') or settings.get('edge_color')
         stroke_opacity = settings.get('edge_alpha')
@@ -301,4 +306,25 @@ class AMapPlotter(object):
         f.write('\n')
 
         f.write('polygon.setMap(map);\n')
+        f.write('\n\n')
+
+    def write_circle(self, f, circle, settings):
+        stroke_color = settings.get('color') or settings.get('edge_color')
+        stroke_opacity = settings.get('edge_alpha')
+        stroke_weight = settings.get('edge_width')
+        fill_color = settings.get('fill_color')
+        fill_opacity = settings.get('fill_opacity')
+        lat, lng, radius = circle
+        f.write('var circle = new AMap.Circle({\n')
+        f.write('\tcenter: new AMap.LngLat("%s", "%s"),\n' % (lng, lat))
+        f.write('\tradius:%s,\n' % radius)
+        f.write('\tstrokeColor:"%s",\n' % stroke_color)
+        f.write('\tstrokeOpacity:%s,\n' % stroke_opacity)
+        f.write('\tstrokeWeight:%s,\n' % stroke_weight)
+        f.write('\tfillColor:"%s",\n' % fill_color)
+        f.write('\tfillOpacity: %s\n' % fill_opacity)
+        f.write('});')
+        f.write('\n')
+
+        f.write('circle.setMap(map);\n')
         f.write('\n\n')

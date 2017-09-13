@@ -6,7 +6,8 @@ TODO
 
 * ~~画 Polyline~~
 * ~~画 Polygon~~
-* 重构做到可以增加多个 Polygon, 及 Polygon 与 Polyline 混合使用.
-* 画圆
+* ~~重构做到可以增加多个 Polygon, 及 Polygon 与 Polyline 混合使用.~~
+* ~~画圆~~
 * 生成热力图
+* 重构, 使用 dict 替换 list, 避免重复 (待定)
 
