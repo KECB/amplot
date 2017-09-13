@@ -12,7 +12,7 @@ setup(
     author='Yang Bai',
     author_email='by66666@gmail.com',
     url='https://github.com/KECB/amplot',
-    download_url='https://github.com/KECB/amplot/archive/0.1.tar.gz',
+    download_url='',
     keywords=['amplot', 'map', 'plot'],
     classifiers=[],
 )
