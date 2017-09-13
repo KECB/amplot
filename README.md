@@ -1,6 +1,6 @@
 # AmPlot
 
-   受到 gmplot 启发, 基于高德地图做一个可以python 简单调用生成地图 html 页面. 用于展示数据用
+   受到 [gmplot](https://github.com/vgm64/gmplot) 启发, 基于高德地图做一个可以python 简单调用生成地图 html 页面. 用于展示数据用
    
 TODO
 
