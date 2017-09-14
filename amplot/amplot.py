@@ -27,7 +27,7 @@ class AMapPlotter(object):
         self.zoom = int(zoom)
         self.grids = None
         self.paths = {}
-        self.shapes = []
+        self.shapes = {}
         self.circles = []
         self.points = []
         self.heatmap_points = []
@@ -116,11 +116,13 @@ class AMapPlotter(object):
             name = 'path' + str(self.__counter)
         self.paths[name] = {'path': points, 'settings': settings}
 
-    def polygon(self, lats, lngs, color=None, **kwargs):
+    def add_polygon(self, points, name=None, color=None, **kwargs):
         kwargs.setdefault("color", color)
         settings = self._process_kwargs(kwargs)
-        shape = zip(lats, lngs)
-        self.shapes.append((shape, settings))
+        if not name:
+            self.__counter += 1
+            name = 'polygon' + str(self.__counter)
+        self.shapes[name] = {'path': points, 'settings': settings}
 
     def heatmap(self, lats, lngs, threshold=10, radius=10, gradient=None, opacity=0.6, dissipating=True):
         """
@@ -142,13 +144,6 @@ class AMapPlotter(object):
         for lat, lng in zip(lats, lngs):
             heatmap_points.append((lat, lng))
         self.heatmap_points.append((heatmap_points, settings))
-
-    def polygon(self, lats, lngs, color=None, c=None, **kwargs):
-        color = color or c
-        kwargs.setdefault("color", color)
-        settings = self._process_kwargs(kwargs)
-        shape = zip(lats, lngs)
-        self.shapes.append((shape, settings))
 
     def draw(self, htmlfile, title='高德地图演示'):
         with open(htmlfile, 'w') as f:
@@ -261,8 +256,8 @@ class AMapPlotter(object):
             self.write_polyline(f, name, path)
 
     def write_shapes(self, f):
-        for shape, settings in self.shapes:
-            self.write_polygon(f, shape, settings)
+        for name, path in self.shapes.items():
+            self.write_polygon(f, name, path)
 
     def write_circles(self, f):
         for circle, settings in self.circles:
@@ -275,13 +270,9 @@ class AMapPlotter(object):
         stroke_opacity = settings.get('edge_alpha')
         stroke_weight = settings.get('edge_width')
 
-        # TODO 动态生成 lineArr 名称
+        # 转换成 string
         line = json.dumps(line)
         f.write('var %sArr = %s;\n' % (name, line))
-        # for coordinate in path:
-        #     f.write('[%f, %f],\n' %
-        #             (coordinate[1], coordinate[0]))
-        # f.write('];\n')
 
         f.write('var %s = new AMap.Polyline({\n' % name)
         f.write('\tpath:%sArr,\n' % name)
@@ -297,22 +288,21 @@ class AMapPlotter(object):
         f.write('%s.setMap(map);\n' % name)
         f.write('\n\n')
 
-    def write_polygon(self, f, path, settings):
+    def write_polygon(self, f, name, path):
+        settings = path['settings']
+        lines = path['path']
         stroke_color = settings.get('color') or settings.get('edge_color')
         stroke_opacity = settings.get('edge_alpha')
         stroke_weight = settings.get('edge_width')
         fill_color = settings.get('fill_color')
         fill_opacity = settings.get('fill_opacity')
 
-        # TODO 动态生成 lineArr 名称
-        f.write('var polygonArr = [\n')
-        for coordinate in path:
-            f.write('[%f, %f],\n' %
-                    (coordinate[1], coordinate[0]))
-        f.write('];\n')
+        #  转成 string
+        lines = json.dumps(lines)
+        f.write('var %sArr = %s\n;' % (name, lines))
 
-        f.write('var polygon = new AMap.Polygon({\n')
-        f.write('\tpath:polygonArr,\n')
+        f.write('var %s = new AMap.Polygon({\n' % name)
+        f.write('\tpath:%sArr,\n' % name)
         f.write('\tstrokeColor:"%s",\n' % stroke_color)
         f.write('\tstrokeOpacity:%s,\n' % stroke_opacity)
         f.write('\tstrokeWeight:%s,\n' % stroke_weight)
@@ -321,7 +311,7 @@ class AMapPlotter(object):
         f.write('});')
         f.write('\n')
 
-        f.write('polygon.setMap(map);\n')
+        f.write('%s.setMap(map);\n' % name)
         f.write('\n\n')
 
     def write_circle(self, f, circle, settings):
