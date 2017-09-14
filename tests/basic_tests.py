@@ -22,7 +22,7 @@ def basics():
     for points in lines:
         lats.append(points[1])
         lngs.append(points[0])
-    amap.plot(lats, lngs, color='blue', edge_width='5')
+    amap.add_path(lines, color='blue', edge_width='5')
     # 第二条线坐标集合
     lines = [[116.388904, 39.913423],
              [116.372122, 39.901176],
@@ -33,7 +33,7 @@ def basics():
     for points in lines:
         lats.append(points[1])
         lngs.append(points[0])
-    amap.plot(lats, lngs, color='mediumseagreen', edge_width='5')
+    amap.add_path(lines, color='mediumseagreen', edge_width='5')
     # 第一多边形坐标集合
     shape = [[116.403322, 39.920255],
              [116.410703, 39.897555],
