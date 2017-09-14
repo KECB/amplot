@@ -1,5 +1,7 @@
 # AmPlot
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
    受到 [gmplot](https://github.com/vgm64/gmplot) 启发, 基于高德地图做一个可以python 简单调用生成地图 html 页面. 用于展示数据用
    
 TODO
@@ -10,5 +12,6 @@ TODO
 * ~~画圆~~
 * 带洞多边形
 * 生成热力图
-* 重构, 使用 dict 替换 list, 避免重复 (待定)
+* ~~重构, 使用 dict 替换 list, 避免重复~~
+* 重构, 规范命名方式. 更简单易懂.
 
