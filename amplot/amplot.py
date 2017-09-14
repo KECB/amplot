@@ -28,7 +28,7 @@ class AMapPlotter(object):
         self.grids = None
         self.paths = {}
         self.shapes = {}
-        self.circles = []
+        self.circles = {}
         self.points = []
         self.heatmap_points = []
         self.radpoints = []
@@ -70,12 +70,16 @@ class AMapPlotter(object):
             else:
                 self.circle(lat, lng, size, **settings)
 
-    def circle(self, lat, lng, radius, color=None, **kwargs):
+    def circle(self, lat, lng, radius, name=None, color=None, **kwargs):
         kwargs.setdefault('face_alpha', 0.5)
         kwargs.setdefault('face_color', "#000000")
         kwargs.setdefault("color", color)
         settings = self._process_kwargs(kwargs)
-        self.circles.append(((lat, lng, radius), settings))
+        if not name:
+            self.__counter += 1
+            name = 'circle' + str(self.__counter)
+        self.circles[name] = {'lat': lat, 'lng': lng, 'radius': radius,
+                              'settings': settings}
 
     def get_cycle(self, lat, lng, rad):
         # unit of radius: meter
@@ -260,8 +264,8 @@ class AMapPlotter(object):
             self.write_polygon(f, name, path)
 
     def write_circles(self, f):
-        for circle, settings in self.circles:
-            self.write_circle(f, circle, settings)
+        for name, settings in self.circles.items():
+            self.write_circle(f, name, settings)
 
     def write_polyline(self, f, name, path):
         settings = path['settings']
@@ -314,14 +318,17 @@ class AMapPlotter(object):
         f.write('%s.setMap(map);\n' % name)
         f.write('\n\n')
 
-    def write_circle(self, f, circle, settings):
+    def write_circle(self, f, name, settings):
+        lat, lng, radius = settings.get('lat'), settings.get('lng'), \
+                           settings.get('radius')
+        settings = settings['settings']
         stroke_color = settings.get('color') or settings.get('edge_color')
         stroke_opacity = settings.get('edge_alpha')
         stroke_weight = settings.get('edge_width')
         fill_color = settings.get('fill_color')
         fill_opacity = settings.get('fill_opacity')
-        lat, lng, radius = circle
-        f.write('var circle = new AMap.Circle({\n')
+
+        f.write('var %s = new AMap.Circle({\n' % name)
         f.write('\tcenter: new AMap.LngLat("%s", "%s"),\n' % (lng, lat))
         f.write('\tradius:%s,\n' % radius)
         f.write('\tstrokeColor:"%s",\n' % stroke_color)
@@ -332,5 +339,5 @@ class AMapPlotter(object):
         f.write('});')
         f.write('\n')
 
-        f.write('circle.setMap(map);\n')
+        f.write('%s.setMap(map);\n' % name)
         f.write('\n\n')
