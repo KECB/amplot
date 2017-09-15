@@ -20,4 +20,6 @@ TODO
 Example TODO
 * 海量点图
 * 热力图
+  2017年1月伦敦自行车被盗事件热力图.
+  ![伦敦自行车盗窃热力图](./arts/london-bicycle-theft.png)
 
