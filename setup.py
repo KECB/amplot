@@ -4,7 +4,7 @@ except ImportError:
     from distutils.core import setup
 import os
 
-__version__ = '0.3.0'
+__version__ = '0.3.5'
 
 
 def read(fname):

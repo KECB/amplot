@@ -9,7 +9,8 @@ from .amplot import AMapPlotter
 
 class MassPlotter(AMapPlotter):
 
-    def __init__(self, amap_key, center_lat, center_lng, zoom):
+    def __init__(self, amap_key, center_lat='35.312316',
+                 center_lng='102.342785', zoom=4):
         AMapPlotter.__init__(self, amap_key, center_lat, center_lng, zoom)
         self.mass_marker = []
         self.style = ''
@@ -46,8 +47,10 @@ class MassPlotter(AMapPlotter):
             f.write('<script>\n')
             # TODO 添加脚本
             self.write_map(f)
-            self.write_style(f)
-            self.write_mass(f)
+            if self.style != '':
+                self.write_style(f)
+            if len(self.mass_marker) > 0:
+                self.write_mass(f)
             f.write('</script>\n')
 
             f.write('</body>\n')

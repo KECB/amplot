@@ -14,13 +14,13 @@ def safe_iter(var):
 
 
 class AMapPlotter(object):
-    def __init__(self, amap_key, center_lat, center_lng, zoom):
+    def __init__(self, amap_key, center_lat='35.312316',
+                 center_lng='102.342785', zoom=4):
         """
         
         :param amap_key: 必填, 高德地图 API_KEY, 用于调用 REST_API
-        :param center_lat: 
-        :param center_lng: 
-        :param zoom: 
+        :param center_lat center_lng: 默认中国中心
+        :param zoom: 默认国家级
         """
         self.key = amap_key
         self.center = (float(center_lat), float(center_lng))
@@ -48,8 +48,11 @@ class AMapPlotter(object):
             'http://restapi.amap.com/v3/geocode/geo?key=%s&address=%s' % (
                 self.key, location_string))
         geocode = json.loads(geocode.text, encoding='utf-8')
-        lng, lat = geocode['geocodes'][0]['location'].split(',')
-        return lat, lng
+        try:
+            lng, lat = geocode['geocodes'][0]['location'].split(',')
+            return lat, lng
+        except IndexError:
+            return 'No such place'
 
     def grid(self, slat, elat, latin, slng, elng, lngin):
         self.gridsetting = [slat, elat, latin, slng, elng, lngin]
@@ -173,7 +176,7 @@ class AMapPlotter(object):
                 '\t<div id="container"></div>\n')
             # 高德地图脚本
             f.write('<script>\n')
-            # TODO 添加脚本
+            # TODO 添加脚本, 判断数据是否为空后再选择是否写
             self.write_map(f)
             self.write_paths(f)
             self.write_shapes(f)
