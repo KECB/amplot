@@ -1,5 +1,6 @@
 from amplot import AMapPlotter
 from amplot import MassPlotter
+from amplot import Heatmap
 import requests
 import json
 
@@ -88,4 +89,23 @@ def mass_marker():
     amap.draw('mass.html')
 
 
-mass_marker()
+def heatmap():
+    """
+        测试画圆, 画线, 画多边形.
+        """
+    with open('key', 'r') as f:
+        key = f.readline()
+    amap_key = key
+    amap = Heatmap(amap_key, '39.921984', '116.418261', 11)
+    # step1 加载热度地图数据
+    response = requests.get(
+                'http://a.amap.com/jsapi_demos/static/resource/heatmapData.js')
+    response = response.text.replace('\n','').replace(' ','')
+    data = json.loads(response.split('=')[1][:-1])
+    amap.add_heatmap_data(data)
+
+    # step2 生成 html
+    amap.draw('heatmap.html')
+
+
+heatmap()
