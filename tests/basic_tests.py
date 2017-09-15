@@ -1,5 +1,7 @@
 from amplot import AMapPlotter
-
+from amplot import MassPlotter
+import requests
+import json
 
 def basics():
     """
@@ -48,8 +50,42 @@ def basics():
     # 第二圆心坐标及圆大小
     amap.circle(39.920255, 116.403322, 500, color='red', opacity='1',
                 fill_color='red', fill_opacity='0.35')
+    # 第三圆心坐标及圆大小
+    amap.circle(39.159556, -94.337896, 10000, color='red', opacity='1',
+                fill_color='red', fill_opacity='0.35')
     # 生成 html
     amap.draw('test.html')
 
 
-basics()
+def mass_marker():
+    """
+        测试画圆, 画线, 画多边形.
+        """
+    with open('key', 'r') as f:
+        key = f.readline()
+    amap_key = key
+    amap = MassPlotter(amap_key, '35.312316', '102.342785', 4)
+    # step1 加载海量数据
+    response = requests.get('http://a.amap.com/jsapi_demos/static/citys.js')
+    data = json.loads(response.text.split('=')[1])
+    amap.add_mass_marker(data)
+    # step2 为数据增加样式属性
+    style = "[{url: 'http://a.amap.com/jsapi_demos/static/images/mass0.png'," \
+            "anchor: new AMap.Pixel(6, 6)," \
+            "size: new AMap.Size(11, 11)" \
+            "},{" \
+            "url: 'http://a.amap.com/jsapi_demos/static/images/mass1.png'," \
+            "anchor: new AMap.Pixel(4, 4)," \
+            "size: new AMap.Size(7, 7) " \
+            "},{" \
+            "url: 'http://a.amap.com/jsapi_demos/static/images/mass2.png'," \
+            "anchor: new AMap.Pixel(3, 3)," \
+            "size: new AMap.Size(5, 5)" \
+            "}]"
+
+    amap.add_style(style)
+    # step3 生成 html
+    amap.draw('mass.html')
+
+
+mass_marker()
