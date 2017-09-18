@@ -1,6 +1,7 @@
 from amplot import AMapPlotter
 from amplot import MassPlotter
 from amplot import Heatmap
+from amplot import TrackReview
 import requests
 import json
 
@@ -108,4 +109,29 @@ def heatmap():
     amap.draw('heatmap.html')
 
 
-heatmap()
+def track_path_map():
+    """
+    测试轨迹图
+    """
+    with open('key', 'r') as f:
+        key = f.readline()
+    amap_key = key
+    amap = TrackReview(amap_key, '39.921984', '116.418261', 4)
+    # step1 加载轨迹
+    track_path = [[116.405289, 39.904987],[113.964458, 40.54664],
+                  [111.47836, 41.135964],[108.949297, 41.670904],
+                  [106.380111, 42.149509],
+                [103.774185, 42.56996],
+                [101.135432, 42.930601],
+                [98.46826, 43.229964],
+                [95.777529, 43.466798],
+                [93.068486, 43.64009],
+                [90.34669, 43.749086],
+                [87.61792, 43.793308]]
+    amap.add_track_path(track_path=track_path)
+
+    # step2 生成 html
+    amap.draw('track_path.html')
+
+
+track_path_map()

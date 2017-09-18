@@ -54,7 +54,7 @@ def generat_mass_map():
     amap.draw('london.html')
 
 
-def generate_heatmap():
+def generate_heatmap(crime_type=''):
     """
     [{
         "lng": 116.191031,
